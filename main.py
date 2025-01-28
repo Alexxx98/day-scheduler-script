@@ -5,12 +5,14 @@ from schedule import schedule
 
 import os
 import discord
+import pytz
 
 
 load_dotenv()
 
 CHANNEL_ID = os.getenv("CHANNEL_ID")
 BOT_TOKEN = os.getenv("BOT_TOKEN")
+TIMEZONE = pytz.timezone('Europe/Warsaw')
 
 
 async def send_message(channel, message):
@@ -23,7 +25,7 @@ class Client(discord.Client):
 
         channel = self.get_channel(int(CHANNEL_ID))
         
-        scheduler = AsyncIOScheduler()
+        scheduler = AsyncIOScheduler(timezone=TIMEZONE)
 
         for time, task in schedule.items():
             hour, minute = time.split(':')
