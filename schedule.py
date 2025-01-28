@@ -6,4 +6,7 @@ schedule = {
     "13:0": "Przerwa Obiadowa",
     "16:0": "Nauka",
     "18:15": "Workout",
+    "12:22": "siema",
+    "12:22": "co tam",
+    "12:23": "essa",
 }

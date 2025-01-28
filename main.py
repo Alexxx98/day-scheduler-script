@@ -14,7 +14,7 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 
 async def send_message(channel, message):
-    await channel.send("Workout")
+    await channel.send(message)
 
 
 class Client(discord.Client):
