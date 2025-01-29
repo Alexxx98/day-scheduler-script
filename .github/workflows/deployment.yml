@@ -1,7 +1,7 @@
 name: App Deployment
 on: [push]
 jobs:
-  Deploy App:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
