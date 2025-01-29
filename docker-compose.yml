@@ -1,0 +1,34 @@
+version: "3.8"
+
+networks:
+  db-net:
+  app-net:
+
+volumes:
+  schedule_data:
+
+
+services:
+  db:
+    image: postgres:17-alpine
+    ports:
+      - "5434:5434"
+    volumes:
+      - schedule_data:/var/lib/postgresql/schedule_data
+    env_file:
+      - postgres.env
+    networks:
+      - db-net
+    command: -p 5434
+
+  app:
+    build: .
+    image: day-scheduler-script
+    ports:
+      - "8090:86"
+    networks:
+      - db-net
+      - app-net
+    depends_on:
+      - db
+    
