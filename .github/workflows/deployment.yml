@@ -20,11 +20,11 @@ jobs:
             echo "BOT_TOKEN=${{ secrets.BOT_TOKEN }}" >> .env
             echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
             echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
-            echo "POSTGRES_PASSWORD=${{ POSTGRES_PASSWORD }}" >> .env
+            echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
 
             echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" > postgres.env
             echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> postgres.env
-            echo "POSTGRES_PASSWORD=${{ POSTGRES_PASSWORD }}" >> postgres.env
+            echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> postgres.env
 
             docker-compose stop
             docker-compose build
