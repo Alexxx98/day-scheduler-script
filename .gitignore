@@ -2,6 +2,5 @@
 __pycache__
 .env
 postgres.env
-.github
 
 dss_env
