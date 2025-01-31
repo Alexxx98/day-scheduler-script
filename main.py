@@ -33,12 +33,12 @@ jobstore = {
 # Send message to the discord channel
 async def send_task_message(user_id: int, message: str):
     user = bot.get_user(user_id)
-    plyer.notification(
+    await user.send(message)
+    await plyer.notification(
         title="Task",
         message=message,
         timeout=5 # Displaying time
     )
-    await user.send(message)
 
 
 scheduler = AsyncIOScheduler(timezone=TIMEZONE, jobstores=jobstore)
