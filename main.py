@@ -2,12 +2,13 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from apscheduler.triggers.cron import CronTrigger
 from discord.ext import commands
+from plyer import notification
 from dotenv import load_dotenv
 
 import os
 import discord
 import pytz
-import plyer
+import asyncio
 
 
 load_dotenv()
@@ -34,12 +35,23 @@ jobstore = {
 async def send_task_message(user_id: int, message: str):
     user = bot.get_user(user_id)
     await user.send(message)
-    plyer.notification.notify(
-        title="Day Scheduler",
-        message=message,
-        app_icon="bot-icon.png",
-        timeout=5 # Displaying time
+
+# Send notification to desktop
+async def send_desktop_notification(message: str):
+    await asyncio.to_thread(
+        notification.notify(
+            title="Day Scheduler",
+            message=message,
+            app_name="Day Scheduler",
+            app_icon="bot_icon.png",
+            timeout=5,
+        )
     )
+
+# Combine both sending functions, to put them into the scheduler
+async def send_notifications(user_id: int, message: str):
+    await send_task_message(user_id, message)
+    await send_desktop_notification(message)
 
 
 scheduler = AsyncIOScheduler(timezone=TIMEZONE, jobstores=jobstore)
@@ -77,7 +89,7 @@ async def add_task(interaction: discord.Interaction, day_of_week: str, start_tim
 
     hour, minute = start_time.split(':')
     scheduler.add_job(
-        func=send_task_message,
+        func=send_notifications,
         trigger=CronTrigger(day_of_week=day_of_week, hour=int(hour), minute=int(minute), timezone=TIMEZONE),
         args=(user.id, task),
         name=task
