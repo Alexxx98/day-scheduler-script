@@ -34,9 +34,10 @@ jobstore = {
 async def send_task_message(user_id: int, message: str):
     user = bot.get_user(user_id)
     await user.send(message)
-    await plyer.notification(
-        title="Task",
+    await plyer.notification.notify(
+        title="Day Scheduler",
         message=message,
+        app_icon="bot-icon.png",
         timeout=5 # Displaying time
     )
 
