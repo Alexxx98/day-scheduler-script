@@ -2,37 +2,26 @@ name: App Deployment
 on: [push]
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Save ssh key to a file
+      - name: Deploy app
         run: |
-          mkdir ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/day-scheduler-script-deployment-key
-      - name: Give permissions to a ssh key file
-        run: chmod 600 ~/.ssh/day-scheduler-script-deployment-key
-      - name: Add server ip to known hosts file
-        run: ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
-      - name: Synchronize the files between the repo and the server
-        run: rsync -avz --delete -e "ssh -p ${{ secrets.SSH_PORT }} ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.WORK_DIR }}
-      - name: Connect to the server and deploy the app
-        run: |
-          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            cd ${{ secrets.WORK_DIR }}
-          
-            echo "CHANNEL_ID=${{ secrets.CHANNEL_ID }}" > .env
-            echo "GUILD_ID=${{ secrets.GUILD_ID }}" >> .env
-            echo "BOT_TOKEN=${{ secrets.BOT_TOKEN }}" >> .env
-            echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
-            echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
-            echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
+          cd ${{ secrets.WORK_DIR }}
+          git pull
 
-            echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" > postgres.env
-            echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> postgres.env
-            echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> postgres.env
+          echo "CHANNEL_ID=${{ secrets.CHANNEL_ID }}" > .env
+          echo "GUILD_ID=${{ secrets.GUILD_ID }}" >> .env
+          echo "BOT_TOKEN=${{ secrets.BOT_TOKEN }}" >> .env
+          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
+          echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
 
-            docker-compose stop
-            docker-compose build
-            docker-compose up -d
-          EOF
+          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" > postgres.env
+          echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> postgres.env
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> postgres.env
+
+          docker-compose stop
+          docker-compose build
+          docker-compose up -d
